@@ -30,7 +30,12 @@ describe(('Inital test'), () => {
     );
   });
 
-  it(('Mostrando listas'), () => {
+  it(('Mostrando listas de notas'), () => {
     expect(notes.listNotes('Carlos')).to.be.equal('Primera Nota\n');
+  });
+
+  it(('Eliminar nota'), () => {
+    notes.removeNote('Carlos', `Primera Nota`);
+    expect(fs.existsSync(`./notes/Primera Nota`) ).to.be.equal(false);
   });
 });
