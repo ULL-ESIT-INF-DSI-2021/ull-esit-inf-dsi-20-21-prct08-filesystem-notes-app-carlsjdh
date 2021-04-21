@@ -38,4 +38,23 @@ describe(('Inital test'), () => {
     notes.removeNote('Carlos', `Primera Nota`);
     expect(fs.existsSync(`./notes/Primera Nota`) ).to.be.equal(false);
   });
+
+  it(('Añadir segunda nota'), () => {
+    notes.addNotes(`Carlos`, `Segunda Nota`, `Nota`, `green`);
+    notes.addNotes(`Carlos`, `Segunda Nota`, `Nota`, `green`);
+    const JsonNotes = notes.readNotes(`Carlos`, `Segunda Nota`);
+    expect(JsonNotes).to.be.deep.equal(
+        {
+          'body': 'Nota',
+          'color': 'green',
+          'title': 'Segunda Nota',
+        },
+    );
+  });
+
+  it(('Buscar notas que no existen'), () => {
+    expect(notes.readNotes(`Carlos`, `Nota tres`)).to.be.equal(
+        `Note not found`,
+    );
+  });
 });

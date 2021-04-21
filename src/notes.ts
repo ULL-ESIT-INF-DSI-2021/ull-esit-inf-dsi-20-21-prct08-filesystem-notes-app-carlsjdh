@@ -44,6 +44,7 @@ export class Notes {
       return JsonNote;
     } else {
       console.log('Note not found');
+      return 'Note not found';
     }
   }
 
