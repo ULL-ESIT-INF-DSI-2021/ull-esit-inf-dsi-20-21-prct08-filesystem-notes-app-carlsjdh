@@ -23,39 +23,25 @@ export class Notes {
     const text = `{ "title": "${title}", "body": "${body}" , "color": "${color}" }`;
     if (fs.existsSync(`./notes/${username}`)) {
       if (!fs.existsSync(`./notes/${username}/${title}`)) {
-        fs.writeFile(`./notes/${username}/${title}`, text, (err) => {
-          if (err) {
-            console.log('Something went wrong when writing your file');
-          } else {
-            console.log(`New note added! (Title ${title})`);
-          }
-        });
+        fs.writeFileSync(`./notes/${username}/${title}`, text);
+        console.log(`New note added! (Title ${title})`);
       } else {
         console.log('Note title taken!');
       };
     } else {
       fs.mkdirSync(`./notes/${username}`, {recursive: true});
-      fs.writeFile(`./notes/${username}/${title}`, text, (err) => {
-        if (err) {
-          console.log('Something went wrong when writing your file');
-        } else {
-          console.log(`New note added! (Title ${title})`);
-        }
-      });
+      fs.writeFileSync(`./notes/${username}/${title}`, text);
+      console.log(`New note added! (Title ${title})`);
     }
   };
 
   readNotes(username :string, title :string) {
     if (fs.existsSync(`./notes/${username}/${title}`)) {
-      fs.readFile(`./notes/${username}/${title}`, (err, data) => {
-        if (err) {
-          console.log(`Error de lectura ${title}`);
-        } else {
-          const JsonNote = JSON.parse(data.toString());
-          this.consolelogColor(`${JsonNote.title}`, JsonNote.color, true);
-          this.consolelogColor(`${JsonNote.body}`, JsonNote.color);
-        }
-      });
+      const data = fs.readFileSync(`./notes/${username}/${title}`);
+      const JsonNote = JSON.parse(data.toString());
+      this.consolelogColor(`${JsonNote.title}`, JsonNote.color, true);
+      this.consolelogColor(`${JsonNote.body}`, JsonNote.color);
+      return JsonNote;
     } else {
       console.log('Note not found');
     }
@@ -124,4 +110,5 @@ export class Notes {
     throw new Error('Color problem');
   }
 };
+
 
