@@ -69,8 +69,10 @@ export class Notes {
     if (fs.existsSync(`./notes/${username}/${title}`)) {
       console.log('Note removed!');
       fs.rmSync(`./notes/${username}/${title}`);
+      return `Note removed!`;
     } else {
       console.log(`No note found`);
+      return `No note found`;
     }
   }
 

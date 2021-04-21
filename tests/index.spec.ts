@@ -3,7 +3,7 @@ import {expect} from 'chai';
 import {Notes} from '../src/notes';
 import * as fs from 'fs';
 
-
+fs.rmdirSync(`./notes`, {recursive: true});
 describe(('Inital test'), () => {
   const notes :Notes = Notes.getNotes();
   it(('Se instancia una clase Notes correctamente'), () => {
@@ -56,5 +56,14 @@ describe(('Inital test'), () => {
     expect(notes.readNotes(`Carlos`, `Nota tres`)).to.be.equal(
         `Note not found`,
     );
+  });
+
+  it(('Listar notas de un usuario que no existe'), () => {
+    expect(notes.listNotes(`Mario`)).to.be.equal('User doesnt exist');
+  });
+
+  it(('Listar notas de un usuario que no existe'), () => {
+    expect(notes.removeNote(`Carlos`, `Tercera nota`)).to.be.equal(
+        'No note found');
   });
 });
