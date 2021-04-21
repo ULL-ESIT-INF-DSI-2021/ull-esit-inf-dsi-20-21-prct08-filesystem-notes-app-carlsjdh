@@ -50,14 +50,17 @@ export class Notes {
   listNotes(username :string) {
     if (fs.existsSync(`./notes/${username}`)) {
       console.log(chalk.white.inverse('Your notes:'));
+      let list = '';
       fs.readdirSync(`./notes/${username}/`).forEach((note) => {
-        fs.readFile(`./notes/${username}/${note}`, (_, data) => {
-          const JsonNote = JSON.parse(data.toString());
-          this.consolelogColor(`- ${JsonNote.title}`, JsonNote.color);
-        });
+        const data = fs.readFileSync(`./notes/${username}/${note}`);
+        const JsonNote = JSON.parse(data.toString());
+        list = list + JsonNote.title + '\n';
+        this.consolelogColor(`- ${JsonNote.title}`, JsonNote.color);
       });
+      return list;
     } else {
       console.log(`That user doesn´t exist`);
+      return 'User doesnt exist';
     }
   }
 
@@ -112,3 +115,5 @@ export class Notes {
 };
 
 
+const note :Notes = Notes.getNotes();
+console.log(note.listNotes('Carlos'));

@@ -29,4 +29,8 @@ describe(('Inital test'), () => {
         },
     );
   });
+
+  it(('Mostrando listas'), () => {
+    expect(notes.listNotes('Carlos')).to.be.equal('Primera Nota\n');
+  });
 });
