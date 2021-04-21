@@ -1,7 +1,7 @@
 import 'mocha';
 import {expect} from 'chai';
 import {Notes} from '../src/notes';
-import * as fs from 'fs';
+// import * as fs from 'fs';
 
 
 describe(('Inital test'), () => {
