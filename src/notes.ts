@@ -113,7 +113,3 @@ export class Notes {
     throw new Error('Color problem');
   }
 };
-
-
-const note :Notes = Notes.getNotes();
-console.log(note.listNotes('Carlos'));
