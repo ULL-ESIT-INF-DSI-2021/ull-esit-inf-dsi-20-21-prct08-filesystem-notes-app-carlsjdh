@@ -6,6 +6,7 @@ QG:  [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?pr
 
 <h1> Práctica 8 - Aplicación de procesamiento de notas de texto  </h1>
 <h2> Indice: </h2>
+
 - [Introducción:](#introducción)
 - [Objetivos:](#objetivos)
 - [Clase Notes:](#clase-notes)
