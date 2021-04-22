@@ -224,7 +224,17 @@ Observamos como para crear un nuevo comando utilizamos el método `command` incl
           argv.color,
       );
 ````
+Este patrón se repetirá para cada uno de los comandos (que corresponden con cada uno de los métodos de la clase `Notes`).  
+
 ## Ejemplos de uso:
+![examples](media://P8.gif)
+
+
 ## Conclusiones:
+La práctica se ha desarrollado sin dificultades y me ha permitido tener un primer contacto con `Node` y su potencia para interactuar con la máquina utilizando `Typescript`.
+
 ## Bibliografía:
+https://nodejs.org/dist/latest-v14.x/docs/api/fs.html  
+https://www.npmjs.com/package/yargs  
+
 
