@@ -14,9 +14,8 @@ QG:  [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?pr
   - [readNotes:](#readnotes)
   - [listNotes:](#listnotes)
   - [removeNote:](#removenote)
-  - [consolelogColor:](#consolelogcolor)
 - [Programa principal:](#programa-principal)
-- [Ejemplos de uso](#ejemplos-de-uso)
+- [Ejemplos de uso:](#ejemplos-de-uso)
 - [Conclusiones:](#conclusiones)
 - [Bibliografía:](#bibliografía)
 
@@ -155,10 +154,77 @@ Note removed!
     }
   }
 ````
-### consolelogColor:
+Funcionamiento bastante simple, si existe el directorio lo eliminamos con `fs.rmSync()` y en caso contrario mostrar información en pantalla que dicha nota no existe.
 
 ## Programa principal:
-## Ejemplos de uso
+El programa principal se encuentra en `note-app.ts` y es donde se utiliza el módulo de `yargs` para invocar a las diferentes funciones de la clase `Notes`.  
+
+````typescript
+yargs.command({
+  command: 'add',
+  describe: 'Add a new note',
+  builder: {
+    user: {
+      describe: 'Username',
+      demandOption: true,
+      type: 'string',
+    },
+    title: {
+      describe: 'Note title',
+      demandOption: true,
+      type: 'string',
+    },
+    body: {
+      describe: 'Body title',
+      demandOption: true,
+      type: 'string',
+    },
+    color: {
+      describe: 'Color´s note',
+      demandOption: true,
+      type: 'string',
+    },
+  },
+  handler(argv) {
+    if (typeof argv.user === 'string' &&
+    typeof argv.title === 'string' &&
+    typeof argv.color === 'string' &&
+    typeof argv.body === 'string') {
+      notas.addNotes(
+          argv.user,
+          argv.title,
+          argv.body,
+          argv.color,
+      );
+    }
+  },
+});
+````
+Observamos como para crear un nuevo comando utilizamos el método `command` incluido en la librería de `yargs` donde basicamente especificamos:
+- __command__: Introduce el argumento necesario para invocar dicho comando
+- __describe__: Una breve descripción del uso del comando
+- __builder__: Especifica los argumentos del comando por ejemplo `--user="username"`:
+  
+  ````typescript
+    user: {
+      describe: 'Username',
+      demandOption: true,
+      type: 'string',
+    },
+  ````
+  - __describe__: Nombre del argumento
+  - __demandOption__: Argumento obligatorio
+  - __type__: tipo del argumento
+- __handler(argv)__: Función que recibe como parametro los argumentos que contienen cada uno en formato `JSON`. En este caso se filtra el tipo de dato introducido y posteriormente invoca a la función correspondiente según el comando (En el ejemplo utilizamos `add` por tanto agregamos una nota: 
+````typescript
+       notas.addNotes(
+          argv.user,
+          argv.title,
+          argv.body,
+          argv.color,
+      );
+````
+## Ejemplos de uso:
 ## Conclusiones:
 ## Bibliografía:
 
