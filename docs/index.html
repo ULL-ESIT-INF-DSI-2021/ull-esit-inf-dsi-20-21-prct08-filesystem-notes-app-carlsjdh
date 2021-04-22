@@ -65,30 +65,163 @@
 				<ul>
 					<li><a href="#introducci%C3%B3n">Introducción:</a></li>
 					<li><a href="#objetivos">Objetivos:</a></li>
-					<li><a href="#clase-notes">Clase Notes:</a></li>
+					<li><a href="#clase-notes">Clase Notes:</a><ul>
+							<li><a href="#addnotes">addNotes:</a></li>
+							<li><a href="#readnotes">readNotes:</a></li>
+							<li><a href="#listnotes">listNotes:</a></li>
+							<li><a href="#removenote">removeNote:</a></li>
+							<li><a href="#consolelogcolor">consolelogColor:</a></li>
+						</ul>
+					</li>
 					<li><a href="#programa-principal">Programa principal:</a></li>
 					<li><a href="#ejemplos-de-uso">Ejemplos de uso</a></li>
-					<li><a href="#testing">Testing:</a></li>
 					<li><a href="#conclusiones">Conclusiones:</a></li>
 					<li><a href="#bibliograf%C3%ADa">Bibliografía:</a></li>
 				</ul>
 				<a href="#introducción" id="introducción" style="color: inherit; text-decoration: none;">
 					<h2>Introducción:</h2>
 				</a>
+				<p>Implemetanción de una aplicación de procesamiento de notas de texto. La misma permite añadir, modificar, eliminar , istar y leer notas de usuarios concretos.
+				Las notas se almacenan en ficheros con contenido en formato JSON de la máquina que ejecute dicha aplicación. Solo será posible interactuar con la misma a través de la línea de comandos gracias al uso del módulo <code>yargs</code>.</p>
 				<a href="#objetivos" id="objetivos" style="color: inherit; text-decoration: none;">
 					<h2>Objetivos:</h2>
 				</a>
-				<a href="#clase-notes" id="clase-notes" style="color: inherit; text-decoration: none;">
-					<h2>Clase Notes:</h2>
+				<ul>
+					<li><p>Utilizar el módulos <code>yargs</code> para la implementación de aplicaciones en línea de comandos</p>
+					</li>
+					<li><p>Utilizar la API síncrona de <code>Node.js</code> para gestionar el I/O del programa.</p>
+						<a href="#clase-notes" id="clase-notes" style="color: inherit; text-decoration: none;">
+							<h2>Clase Notes:</h2>
+						</a>
+						<p>Esta clase será la encargada de gestionar la API sincronca de <code>Node.js</code>. Recalcar el uso del patrón de diseño <code>singleton</code> considerando conveniente que la propia clase gestionará la <code>BBDD</code> de notas en un mismo fichero.</p>
+						<pre><code class="language-typescript"><span style="color: #001080">private</span><span style="color: #000000"> </span><span style="color: #001080">static</span><span style="color: #000000"> notes: </span><span style="color: #001080">Notes</span><span style="color: #000000">;</span>
+
+<span style="color: #001080">private</span><span style="color: #000000"> </span><span style="color: #795E26">constructor</span><span style="color: #000000">() {}</span>
+
+<span style="color: #001080">public</span><span style="color: #000000"> </span><span style="color: #001080">static</span><span style="color: #000000"> </span><span style="color: #795E26">getNotes</span><span style="color: #000000">(): </span><span style="color: #001080">Notes</span><span style="color: #000000"> {</span>
+<span style="color: #000000">  </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (!</span><span style="color: #001080">fs</span><span style="color: #000000">.</span><span style="color: #795E26">existsSync</span><span style="color: #000000">(</span><span style="color: #A31515">`./notes`</span><span style="color: #000000">)) {</span>
+<span style="color: #000000">    </span><span style="color: #001080">fs</span><span style="color: #000000">.</span><span style="color: #795E26">mkdirSync</span><span style="color: #000000">(</span><span style="color: #A31515">`./notes`</span><span style="color: #000000">, {</span><span style="color: #001080">recursive:</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span><span style="color: #000000">});</span>
+<span style="color: #000000">  }</span>
+<span style="color: #000000">  </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (!</span><span style="color: #001080">Notes</span><span style="color: #000000">.</span><span style="color: #001080">notes</span><span style="color: #000000">) {</span>
+<span style="color: #000000">    </span><span style="color: #001080">Notes</span><span style="color: #000000">.</span><span style="color: #001080">notes</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">Notes</span><span style="color: #000000">();</span>
+<span style="color: #000000">  }</span>
+<span style="color: #000000">  </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #001080">Notes</span><span style="color: #000000">.</span><span style="color: #001080">notes</span><span style="color: #000000">;</span>
+<span style="color: #000000">};</span>
+</code></pre>
+					</li>
+				</ul>
+				<p><code>fs.existsSync(Path)</code> nos permite verificar si la ruta Path existe ya que existe la posibilidad de tener el directorio donde se guardarán las notas ya generados. De la misma forma, <code>fs.mkdirSync</code> nos permite crear un directorio (Recordemos que todos estos pasos se realizan de manera síncrona).
+					La propia clase siempre genera un directorio <code>notes</code> para almacenar las notas.
+				Los argumentos utilizados para la correcta ejecución del programa son:</p>
+				<ul>
+					<li><code>--user=&quot;username&quot;</code>: Nombre del usuario de la nota</li>
+					<li><code>--body=&quot;Contenido de la nota&quot;</code>: Contenido de la nota a guardar</li>
+					<li><code>--title=&quot;Título de la nota&quot;</code>: Nombre de la nota</li>
+					<li><code>--color=&quot;color&quot;</code>: Color de la nota, en este caso los colores disponibles son <code>red</code>, <code>blue</code>, <code>green</code> y <code>yellow</code>. En caso de usar cualquier otro color el programa generará un error de ejecución.</li>
+				</ul>
+				<p>A continuación los principales métodos de la clase son:</p>
+				<a href="#addnotes" id="addnotes" style="color: inherit; text-decoration: none;">
+					<h3>addNotes:</h3>
+				</a>
+				<p>Permite agregar notas utilizando los siguientes argumentos:  </p>
+				<p><code>node dist/note-app.js add --user=&quot;Carlos&quot; --title=&quot;Nota uno&quot; --body=&quot;Esta es mi primera nota&quot; --color=&quot;red&quot;</code></p>
+				<pre><code class="language-typescript"><span style="color: #795E26">addNotes</span><span style="color: #000000">(</span><span style="color: #001080">username</span><span style="color: #000000"> :</span><span style="color: #001080">string</span><span style="color: #000000">, </span><span style="color: #001080">title</span><span style="color: #000000"> :</span><span style="color: #001080">string</span><span style="color: #000000">, </span><span style="color: #001080">body</span><span style="color: #000000"> :</span><span style="color: #001080">string</span><span style="color: #000000">, </span><span style="color: #001080">color</span><span style="color: #000000"> :</span><span style="color: #001080">string</span><span style="color: #000000">) {</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">this</span><span style="color: #000000">.</span><span style="color: #795E26">checkColor</span><span style="color: #000000">(</span><span style="color: #001080">color</span><span style="color: #000000">);</span>
+<span style="color: #000000">    </span><span style="color: #008000">// eslint-disable-next-line max-len</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">text</span><span style="color: #000000"> = </span><span style="color: #A31515">`{ &quot;title&quot;: &quot;</span><span style="color: #0000FF">${</span><span style="color: #001080">title</span><span style="color: #0000FF">}</span><span style="color: #A31515">&quot;, &quot;body&quot;: &quot;</span><span style="color: #0000FF">${</span><span style="color: #001080">body</span><span style="color: #0000FF">}</span><span style="color: #A31515">&quot; , &quot;color&quot;: &quot;</span><span style="color: #0000FF">${</span><span style="color: #001080">color</span><span style="color: #0000FF">}</span><span style="color: #A31515">&quot; }`</span><span style="color: #000000">;</span>
+<span style="color: #000000">    </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (</span><span style="color: #001080">fs</span><span style="color: #000000">.</span><span style="color: #795E26">existsSync</span><span style="color: #000000">(</span><span style="color: #A31515">`./notes/</span><span style="color: #0000FF">${</span><span style="color: #001080">username</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">)) {</span>
+<span style="color: #000000">      </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (!</span><span style="color: #001080">fs</span><span style="color: #000000">.</span><span style="color: #795E26">existsSync</span><span style="color: #000000">(</span><span style="color: #A31515">`./notes/</span><span style="color: #0000FF">${</span><span style="color: #001080">username</span><span style="color: #0000FF">}</span><span style="color: #A31515">/</span><span style="color: #0000FF">${</span><span style="color: #001080">title</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">)) {</span>
+<span style="color: #000000">        </span><span style="color: #001080">fs</span><span style="color: #000000">.</span><span style="color: #795E26">writeFileSync</span><span style="color: #000000">(</span><span style="color: #A31515">`./notes/</span><span style="color: #0000FF">${</span><span style="color: #001080">username</span><span style="color: #0000FF">}</span><span style="color: #A31515">/</span><span style="color: #0000FF">${</span><span style="color: #001080">title</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">, </span><span style="color: #001080">text</span><span style="color: #000000">);</span>
+<span style="color: #000000">        </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">`New note added! (Title </span><span style="color: #0000FF">${</span><span style="color: #001080">title</span><span style="color: #0000FF">}</span><span style="color: #A31515">)`</span><span style="color: #000000">);</span>
+<span style="color: #000000">      } </span><span style="color: #AF00DB">else</span><span style="color: #000000"> {</span>
+<span style="color: #000000">        </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Note title taken!&#039;</span><span style="color: #000000">);</span>
+<span style="color: #000000">      };</span>
+<span style="color: #000000">    } </span><span style="color: #AF00DB">else</span><span style="color: #000000"> {</span>
+<span style="color: #000000">      </span><span style="color: #001080">fs</span><span style="color: #000000">.</span><span style="color: #795E26">mkdirSync</span><span style="color: #000000">(</span><span style="color: #A31515">`./notes/</span><span style="color: #0000FF">${</span><span style="color: #001080">username</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">, {</span><span style="color: #001080">recursive:</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span><span style="color: #000000">});</span>
+<span style="color: #000000">      </span><span style="color: #001080">fs</span><span style="color: #000000">.</span><span style="color: #795E26">writeFileSync</span><span style="color: #000000">(</span><span style="color: #A31515">`./notes/</span><span style="color: #0000FF">${</span><span style="color: #001080">username</span><span style="color: #0000FF">}</span><span style="color: #A31515">/</span><span style="color: #0000FF">${</span><span style="color: #001080">title</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">, </span><span style="color: #001080">text</span><span style="color: #000000">);</span>
+<span style="color: #000000">      </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">`New note added! (Title </span><span style="color: #0000FF">${</span><span style="color: #001080">title</span><span style="color: #0000FF">}</span><span style="color: #A31515">)`</span><span style="color: #000000">);</span>
+<span style="color: #000000">    }</span>
+<span style="color: #000000">  };</span>
+</code></pre>
+				<p><code>this.checkColor</code> es un método que nos permite primero si el color del argumento es compatible con nuestro programa. Luego ya solo nos queda filtrar el caso en que exista la nota (No podremos agregar una nota con dos títulos iguales), no exista la nota pero tampoco exista el directorio con el nombre de usuario (Por lo tanto es necesario crearla en nuestra <code>BBDD</code> ya que es la primera nota de ese usuario que se introduce) y exista el nombre de usuario pero no la nota (por lo tanto agregamos la nota a ese directorio).
+				Cabe destacar que la nota se guarda en formato <code>JSON</code> para una mayor facilidad de gestión a la hora de leer los datos.</p>
+				<pre><code class="language-typescript"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">text</span><span style="color: #000000"> = </span><span style="color: #A31515">`{ &quot;title&quot;: &quot;</span><span style="color: #0000FF">${</span><span style="color: #001080">title</span><span style="color: #0000FF">}</span><span style="color: #A31515">&quot;, &quot;body&quot;: &quot;</span><span style="color: #0000FF">${</span><span style="color: #001080">body</span><span style="color: #0000FF">}</span><span style="color: #A31515">&quot; , &quot;color&quot;: &quot;</span><span style="color: #0000FF">${</span><span style="color: #001080">color</span><span style="color: #0000FF">}</span><span style="color: #A31515">&quot; }`</span><span style="color: #000000">;</span>
+</code></pre>
+				<p>Para escribir utilizamos la función <code> fs.writeFileSync(path, text</code> y para la creación de directorios <code>fs.mkdirSync(Path, {recursive: true})</code>  </p>
+				<a href="#readnotes" id="readnotes" style="color: inherit; text-decoration: none;">
+					<h3>readNotes:</h3>
+				</a>
+				<p>Permite leer las notas de un determinado usuario, los argumentos a introducir serían los siguientes:</p>
+				<pre><code class="language-typescript"><span style="color: #001080">node</span><span style="color: #000000"> </span><span style="color: #001080">dist</span><span style="color: #000000">/</span><span style="color: #001080">note</span><span style="color: #000000">-</span><span style="color: #001080">app</span><span style="color: #000000">.</span><span style="color: #001080">js</span><span style="color: #000000"> </span><span style="color: #001080">read</span><span style="color: #000000"> --</span><span style="color: #001080">user</span><span style="color: #000000">=</span><span style="color: #A31515">&quot;Carlos&quot;</span><span style="color: #000000"> --</span><span style="color: #001080">title</span><span style="color: #000000">=</span><span style="color: #A31515">&quot;Nota uno&quot;</span>
+<span style="color: #001080">Nota</span><span style="color: #000000"> </span><span style="color: #001080">uno</span>
+<span style="color: #001080">Esta</span><span style="color: #000000"> </span><span style="color: #001080">es</span><span style="color: #000000"> </span><span style="color: #001080">mi</span><span style="color: #000000"> </span><span style="color: #001080">primera</span><span style="color: #000000"> </span><span style="color: #001080">nota</span>
+</code></pre>
+				<pre><code class="language-typescript"><span style="color: #795E26">readNotes</span><span style="color: #000000">(</span><span style="color: #001080">username</span><span style="color: #000000"> :</span><span style="color: #001080">string</span><span style="color: #000000">, </span><span style="color: #001080">title</span><span style="color: #000000"> :</span><span style="color: #001080">string</span><span style="color: #000000">) {</span>
+<span style="color: #000000">    </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (</span><span style="color: #001080">fs</span><span style="color: #000000">.</span><span style="color: #795E26">existsSync</span><span style="color: #000000">(</span><span style="color: #A31515">`./notes/</span><span style="color: #0000FF">${</span><span style="color: #001080">username</span><span style="color: #0000FF">}</span><span style="color: #A31515">/</span><span style="color: #0000FF">${</span><span style="color: #001080">title</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">)) {</span>
+<span style="color: #000000">      </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">data</span><span style="color: #000000"> = </span><span style="color: #001080">fs</span><span style="color: #000000">.</span><span style="color: #795E26">readFileSync</span><span style="color: #000000">(</span><span style="color: #A31515">`./notes/</span><span style="color: #0000FF">${</span><span style="color: #001080">username</span><span style="color: #0000FF">}</span><span style="color: #A31515">/</span><span style="color: #0000FF">${</span><span style="color: #001080">title</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">);</span>
+<span style="color: #000000">      </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">JsonNote</span><span style="color: #000000"> = </span><span style="color: #267F99">JSON</span><span style="color: #000000">.</span><span style="color: #795E26">parse</span><span style="color: #000000">(</span><span style="color: #001080">data</span><span style="color: #000000">.</span><span style="color: #795E26">toString</span><span style="color: #000000">());</span>
+<span style="color: #000000">      </span><span style="color: #0000FF">this</span><span style="color: #000000">.</span><span style="color: #795E26">consolelogColor</span><span style="color: #000000">(</span><span style="color: #A31515">`</span><span style="color: #0000FF">${</span><span style="color: #001080">JsonNote</span><span style="color: #000000FF">.</span><span style="color: #001080">title</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">, </span><span style="color: #001080">JsonNote</span><span style="color: #000000">.</span><span style="color: #001080">color</span><span style="color: #000000">, </span><span style="color: #0000FF">true</span><span style="color: #000000">);</span>
+<span style="color: #000000">      </span><span style="color: #0000FF">this</span><span style="color: #000000">.</span><span style="color: #795E26">consolelogColor</span><span style="color: #000000">(</span><span style="color: #A31515">`</span><span style="color: #0000FF">${</span><span style="color: #001080">JsonNote</span><span style="color: #000000FF">.</span><span style="color: #001080">body</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">, </span><span style="color: #001080">JsonNote</span><span style="color: #000000">.</span><span style="color: #001080">color</span><span style="color: #000000">);</span>
+<span style="color: #000000">      </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #001080">JsonNote</span><span style="color: #000000">;</span>
+<span style="color: #000000">    } </span><span style="color: #AF00DB">else</span><span style="color: #000000"> {</span>
+<span style="color: #000000">      </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Note not found&#039;</span><span style="color: #000000">);</span>
+<span style="color: #000000">      </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;Note not found&#039;</span><span style="color: #000000">;</span>
+<span style="color: #000000">    }</span>
+<span style="color: #000000">  }</span>
+</code></pre>
+				<p>El programa verifica si dicha nota existe para leerla y extraer su <code>JSON</code> que con <code>JSON.parse()</code> convertiremos los datos en un objeto clave-valor para poder mostrar con facilidad los datos pertinentes. <code>consolelogColor(text, color)</code> imprime por pantalla el valor introducido por argumento y el color con el que se quiere imprimir.<br>El otro caso consiste en no encontrar el directorio ni la nota mostrando un mensaje en pantalla de información.</p>
+				<a href="#listnotes" id="listnotes" style="color: inherit; text-decoration: none;">
+					<h3>listNotes:</h3>
+				</a>
+				<p>Lista las notas de un usuario:</p>
+				<pre><code class="language-typescript"><span style="color: #001080">node</span><span style="color: #000000"> </span><span style="color: #001080">dist</span><span style="color: #000000">/</span><span style="color: #001080">note</span><span style="color: #000000">-</span><span style="color: #001080">app</span><span style="color: #000000">.</span><span style="color: #001080">js</span><span style="color: #000000"> </span><span style="color: #001080">list</span><span style="color: #000000"> --</span><span style="color: #001080">user</span><span style="color: #000000">=</span><span style="color: #A31515">&quot;Carlos&quot;</span>
+<span style="color: #001080">Your</span><span style="color: #000000"> notes:</span>
+<span style="color: #000000">- </span><span style="color: #001080">Nota</span><span style="color: #000000"> </span><span style="color: #001080">uno</span>
+</code></pre>
+				<pre><code class="language-typescript"><span style="color: #000000">  </span><span style="color: #795E26">listNotes</span><span style="color: #000000">(</span><span style="color: #001080">username</span><span style="color: #000000"> :</span><span style="color: #001080">string</span><span style="color: #000000">) {</span>
+<span style="color: #000000">    </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (</span><span style="color: #001080">fs</span><span style="color: #000000">.</span><span style="color: #795E26">existsSync</span><span style="color: #000000">(</span><span style="color: #A31515">`./notes/</span><span style="color: #0000FF">${</span><span style="color: #001080">username</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">)) {</span>
+<span style="color: #000000">      </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">chalk</span><span style="color: #000000">.</span><span style="color: #001080">white</span><span style="color: #000000">.</span><span style="color: #795E26">inverse</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Your notes:&#039;</span><span style="color: #000000">));</span>
+<span style="color: #000000">      </span><span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">list</span><span style="color: #000000"> = </span><span style="color: #A31515">&#039;&#039;</span><span style="color: #000000">;</span>
+<span style="color: #000000">      </span><span style="color: #001080">fs</span><span style="color: #000000">.</span><span style="color: #795E26">readdirSync</span><span style="color: #000000">(</span><span style="color: #A31515">`./notes/</span><span style="color: #0000FF">${</span><span style="color: #001080">username</span><span style="color: #0000FF">}</span><span style="color: #A31515">/`</span><span style="color: #000000">).</span><span style="color: #795E26">forEach</span><span style="color: #000000">((</span><span style="color: #001080">note</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">        </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">data</span><span style="color: #000000"> = </span><span style="color: #001080">fs</span><span style="color: #000000">.</span><span style="color: #795E26">readFileSync</span><span style="color: #000000">(</span><span style="color: #A31515">`./notes/</span><span style="color: #0000FF">${</span><span style="color: #001080">username</span><span style="color: #0000FF">}</span><span style="color: #A31515">/</span><span style="color: #0000FF">${</span><span style="color: #001080">note</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">);</span>
+<span style="color: #000000">        </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">JsonNote</span><span style="color: #000000"> = </span><span style="color: #267F99">JSON</span><span style="color: #000000">.</span><span style="color: #795E26">parse</span><span style="color: #000000">(</span><span style="color: #001080">data</span><span style="color: #000000">.</span><span style="color: #795E26">toString</span><span style="color: #000000">());</span>
+<span style="color: #000000">        </span><span style="color: #001080">list</span><span style="color: #000000"> = </span><span style="color: #001080">list</span><span style="color: #000000"> + </span><span style="color: #001080">JsonNote</span><span style="color: #000000">.</span><span style="color: #001080">title</span><span style="color: #000000"> + </span><span style="color: #A31515">&#039;</span><span style="color: #EE0000">\n</span><span style="color: #A31515">&#039;</span><span style="color: #000000">;</span>
+<span style="color: #000000">        </span><span style="color: #0000FF">this</span><span style="color: #000000">.</span><span style="color: #795E26">consolelogColor</span><span style="color: #000000">(</span><span style="color: #A31515">`- </span><span style="color: #0000FF">${</span><span style="color: #001080">JsonNote</span><span style="color: #000000FF">.</span><span style="color: #001080">title</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">, </span><span style="color: #001080">JsonNote</span><span style="color: #000000">.</span><span style="color: #001080">color</span><span style="color: #000000">);</span>
+<span style="color: #000000">      });</span>
+<span style="color: #000000">      </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #001080">list</span><span style="color: #000000">;</span>
+<span style="color: #000000">    } </span><span style="color: #AF00DB">else</span><span style="color: #000000"> {</span>
+<span style="color: #000000">      </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">`That user doesn´t exist`</span><span style="color: #000000">);</span>
+<span style="color: #000000">      </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;User doesnt exist&#039;</span><span style="color: #000000">;</span>
+<span style="color: #000000">    }</span>
+<span style="color: #000000">  }</span>
+</code></pre>
+				<p>El programa verifica si el directorio correspondiente del usuario existe ya que si no existe quiere decir que ese usuaio no tiene notas asociadas. En caso de que exista simplemente tenemos que leer cada fichero y extraer su <code>title</code> y su <code>color</code> gracias al formato <code>JSON</code> de los datos y utilizar el <code>consolelogColor()</code> para imprimir el <code>title</code> con el color correspondiente.  </p>
+				<a href="#removenote" id="removenote" style="color: inherit; text-decoration: none;">
+					<h3>removeNote:</h3>
+				</a>
+				<p>Elimina una nota del usuario:</p>
+				<pre><code class="language-typescript"><span style="color: #001080">node</span><span style="color: #000000"> </span><span style="color: #001080">dist</span><span style="color: #000000">/</span><span style="color: #001080">note</span><span style="color: #000000">-</span><span style="color: #001080">app</span><span style="color: #000000">.</span><span style="color: #001080">js</span><span style="color: #000000"> </span><span style="color: #001080">remove</span><span style="color: #000000"> --</span><span style="color: #001080">user</span><span style="color: #000000">=</span><span style="color: #A31515">&quot;Carlos&quot;</span><span style="color: #000000"> --</span><span style="color: #001080">title</span><span style="color: #000000">=</span><span style="color: #A31515">&quot;Nota uno&quot;</span>
+<span style="color: #001080">Note</span><span style="color: #000000"> </span><span style="color: #001080">removed</span><span style="color: #000000">!</span>
+</code></pre>
+				<pre><code class="language-typescript"><span style="color: #000000">  </span><span style="color: #795E26">removeNote</span><span style="color: #000000">(</span><span style="color: #001080">username</span><span style="color: #000000"> :</span><span style="color: #001080">string</span><span style="color: #000000">, </span><span style="color: #001080">title</span><span style="color: #000000"> :</span><span style="color: #001080">string</span><span style="color: #000000">) {</span>
+<span style="color: #000000">    </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (</span><span style="color: #001080">fs</span><span style="color: #000000">.</span><span style="color: #795E26">existsSync</span><span style="color: #000000">(</span><span style="color: #A31515">`./notes/</span><span style="color: #0000FF">${</span><span style="color: #001080">username</span><span style="color: #0000FF">}</span><span style="color: #A31515">/</span><span style="color: #0000FF">${</span><span style="color: #001080">title</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">)) {</span>
+<span style="color: #000000">      </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Note removed!&#039;</span><span style="color: #000000">);</span>
+<span style="color: #000000">      </span><span style="color: #001080">fs</span><span style="color: #000000">.</span><span style="color: #795E26">rmSync</span><span style="color: #000000">(</span><span style="color: #A31515">`./notes/</span><span style="color: #0000FF">${</span><span style="color: #001080">username</span><span style="color: #0000FF">}</span><span style="color: #A31515">/</span><span style="color: #0000FF">${</span><span style="color: #001080">title</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">);</span>
+<span style="color: #000000">      </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #A31515">`Note removed!`</span><span style="color: #000000">;</span>
+<span style="color: #000000">    } </span><span style="color: #AF00DB">else</span><span style="color: #000000"> {</span>
+<span style="color: #000000">      </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">`No note found`</span><span style="color: #000000">);</span>
+<span style="color: #000000">      </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #A31515">`No note found`</span><span style="color: #000000">;</span>
+<span style="color: #000000">    }</span>
+<span style="color: #000000">  }</span>
+</code></pre>
+				<a href="#consolelogcolor" id="consolelogcolor" style="color: inherit; text-decoration: none;">
+					<h3>consolelogColor:</h3>
 				</a>
 				<a href="#programa-principal" id="programa-principal" style="color: inherit; text-decoration: none;">
 					<h2>Programa principal:</h2>
 				</a>
 				<a href="#ejemplos-de-uso" id="ejemplos-de-uso" style="color: inherit; text-decoration: none;">
 					<h2>Ejemplos de uso</h2>
-				</a>
-				<a href="#testing" id="testing" style="color: inherit; text-decoration: none;">
-					<h2>Testing:</h2>
 				</a>
 				<a href="#conclusiones" id="conclusiones" style="color: inherit; text-decoration: none;">
 					<h2>Conclusiones:</h2>

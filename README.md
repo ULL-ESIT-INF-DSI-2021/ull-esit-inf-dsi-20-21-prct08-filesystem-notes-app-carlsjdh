@@ -15,10 +15,8 @@ QG:  [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?pr
   - [listNotes:](#listnotes)
   - [removeNote:](#removenote)
   - [consolelogColor:](#consolelogcolor)
-  - [checkColor:](#checkcolor)
 - [Programa principal:](#programa-principal)
 - [Ejemplos de uso](#ejemplos-de-uso)
-- [Testing:](#testing)
 - [Conclusiones:](#conclusiones)
 - [Bibliografía:](#bibliografía)
 
@@ -57,15 +55,110 @@ Los argumentos utilizados para la correcta ejecución del programa son:
 
 A continuación los principales métodos de la clase son:
 ### addNotes:
-Permite agregar notas utilizando los siguientes argumentos
+Permite agregar notas utilizando los siguientes argumentos:  
+
+`node dist/note-app.js add --user="Carlos" --title="Nota uno" --body="Esta es mi primera nota" --color="red"`
+
+````typescript
+addNotes(username :string, title :string, body :string, color :string) {
+    this.checkColor(color);
+    // eslint-disable-next-line max-len
+    const text = `{ "title": "${title}", "body": "${body}" , "color": "${color}" }`;
+    if (fs.existsSync(`./notes/${username}`)) {
+      if (!fs.existsSync(`./notes/${username}/${title}`)) {
+        fs.writeFileSync(`./notes/${username}/${title}`, text);
+        console.log(`New note added! (Title ${title})`);
+      } else {
+        console.log('Note title taken!');
+      };
+    } else {
+      fs.mkdirSync(`./notes/${username}`, {recursive: true});
+      fs.writeFileSync(`./notes/${username}/${title}`, text);
+      console.log(`New note added! (Title ${title})`);
+    }
+  };
+````
+`this.checkColor` es un método que nos permite primero si el color del argumento es compatible con nuestro programa. Luego ya solo nos queda filtrar el caso en que exista la nota (No podremos agregar una nota con dos títulos iguales), no exista la nota pero tampoco exista el directorio con el nombre de usuario (Por lo tanto es necesario crearla en nuestra `BBDD` ya que es la primera nota de ese usuario que se introduce) y exista el nombre de usuario pero no la nota (por lo tanto agregamos la nota a ese directorio).
+Cabe destacar que la nota se guarda en formato `JSON` para una mayor facilidad de gestión a la hora de leer los datos.
+
+````typescript
+const text = `{ "title": "${title}", "body": "${body}" , "color": "${color}" }`;
+````
+Para escribir utilizamos la función ` fs.writeFileSync(path, text` y para la creación de directorios `fs.mkdirSync(Path, {recursive: true})`  
+
 ### readNotes:
+Permite leer las notas de un determinado usuario, los argumentos a introducir serían los siguientes:
+````typescript
+node dist/note-app.js read --user="Carlos" --title="Nota uno"
+Nota uno
+Esta es mi primera nota
+````
+
+````typescript
+readNotes(username :string, title :string) {
+    if (fs.existsSync(`./notes/${username}/${title}`)) {
+      const data = fs.readFileSync(`./notes/${username}/${title}`);
+      const JsonNote = JSON.parse(data.toString());
+      this.consolelogColor(`${JsonNote.title}`, JsonNote.color, true);
+      this.consolelogColor(`${JsonNote.body}`, JsonNote.color);
+      return JsonNote;
+    } else {
+      console.log('Note not found');
+      return 'Note not found';
+    }
+  }
+````  
+El programa verifica si dicha nota existe para leerla y extraer su `JSON` que con `JSON.parse()` convertiremos los datos en un objeto clave-valor para poder mostrar con facilidad los datos pertinentes. `consolelogColor(text, color)` imprime por pantalla el valor introducido por argumento y el color con el que se quiere imprimir.  
+El otro caso consiste en no encontrar el directorio ni la nota mostrando un mensaje en pantalla de información.
 ### listNotes:
+Lista las notas de un usuario:
+````typescript
+node dist/note-app.js list --user="Carlos"
+Your notes:
+- Nota uno
+````
+````typescript
+  listNotes(username :string) {
+    if (fs.existsSync(`./notes/${username}`)) {
+      console.log(chalk.white.inverse('Your notes:'));
+      let list = '';
+      fs.readdirSync(`./notes/${username}/`).forEach((note) => {
+        const data = fs.readFileSync(`./notes/${username}/${note}`);
+        const JsonNote = JSON.parse(data.toString());
+        list = list + JsonNote.title + '\n';
+        this.consolelogColor(`- ${JsonNote.title}`, JsonNote.color);
+      });
+      return list;
+    } else {
+      console.log(`That user doesn´t exist`);
+      return 'User doesnt exist';
+    }
+  }
+````
+El programa verifica si el directorio correspondiente del usuario existe ya que si no existe quiere decir que ese usuaio no tiene notas asociadas. En caso de que exista simplemente tenemos que leer cada fichero y extraer su `title` y su `color` gracias al formato `JSON` de los datos y utilizar el `consolelogColor()` para imprimir el `title` con el color correspondiente.  
+
 ### removeNote:
+Elimina una nota del usuario:
+````typescript
+node dist/note-app.js remove --user="Carlos" --title="Nota uno"
+Note removed!
+````
+````typescript
+  removeNote(username :string, title :string) {
+    if (fs.existsSync(`./notes/${username}/${title}`)) {
+      console.log('Note removed!');
+      fs.rmSync(`./notes/${username}/${title}`);
+      return `Note removed!`;
+    } else {
+      console.log(`No note found`);
+      return `No note found`;
+    }
+  }
+````
 ### consolelogColor:
-### checkColor:
+
 ## Programa principal:
 ## Ejemplos de uso
-## Testing:
 ## Conclusiones:
 ## Bibliografía:
 
