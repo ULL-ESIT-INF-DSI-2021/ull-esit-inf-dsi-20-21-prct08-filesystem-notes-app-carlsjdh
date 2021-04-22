@@ -1,8 +1,14 @@
 import * as yargs from 'yargs';
 import {Notes} from './notes';
 
+/**
+ * Creación de la clase Notes
+ */
 const notas :Notes = Notes.getNotes();
 
+/**
+ * Comando add
+ */
 yargs.command({
   command: 'add',
   describe: 'Add a new note',
@@ -43,6 +49,9 @@ yargs.command({
   },
 });
 
+/**
+ * Comando list
+ */
 yargs.command({
   command: 'list',
   describe: 'List notes',
@@ -60,6 +69,9 @@ yargs.command({
   },
 });
 
+/**
+ * Comando read
+ */
 yargs.command({
   command: 'read',
   describe: 'read note',
@@ -82,6 +94,9 @@ yargs.command({
   },
 });
 
+/**
+ * Comando remove
+ */
 yargs.command({
   command: 'remove',
   describe: 'Remove note',
@@ -104,4 +119,7 @@ yargs.command({
   },
 });
 
+/**
+ * Le pasa los argumentos a yargs
+ */
 yargs.argv;

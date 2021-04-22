@@ -1,12 +1,24 @@
 import * as fs from 'fs';
 import * as chalk from 'chalk';
 
-
+/**
+ * Clase Notes
+ */
 export class Notes {
+  /**
+   * Atributo notes :Notes
+   */
   private static notes: Notes;
 
+  /**
+   * Constructor de la clase Notes vacío y privado
+   */
   private constructor() {}
 
+  /**
+   * Obtienes el notes
+   * @returns Devuelve el notes static
+   */
   public static getNotes(): Notes {
     if (!fs.existsSync(`./notes`)) {
       fs.mkdirSync(`./notes`, {recursive: true});
@@ -17,6 +29,13 @@ export class Notes {
     return Notes.notes;
   };
 
+  /**
+   * AddNotes Agrega una nota
+   * @param username Nombre de usuario
+   * @param title Título de la nota
+   * @param body Body de la nota
+   * @param color Color de la nota
+   */
   addNotes(username :string, title :string, body :string, color :string) {
     this.checkColor(color);
     // eslint-disable-next-line max-len
@@ -35,6 +54,12 @@ export class Notes {
     }
   };
 
+  /**
+   * readNotes lee una nota
+   * @param username Nombre de usuario
+   * @param title Título de la nota
+   * @returns Devuelve información de la nota
+   */
   readNotes(username :string, title :string) {
     if (fs.existsSync(`./notes/${username}/${title}`)) {
       const data = fs.readFileSync(`./notes/${username}/${title}`);
@@ -48,6 +73,11 @@ export class Notes {
     }
   }
 
+  /**
+   * listNotes lista las notas del usuario
+   * @param username Nombre de usuario
+   * @returns Devuelve las notas del usuario
+   */
   listNotes(username :string) {
     if (fs.existsSync(`./notes/${username}`)) {
       console.log(chalk.white.inverse('Your notes:'));
@@ -65,6 +95,12 @@ export class Notes {
     }
   }
 
+  /**
+   * removeNote elimina la nota del usuario
+   * @param username Nombre de usuario
+   * @param title Título de la nota
+   * @returns Devuelve el estado de si se elimina o no correctamente la nota
+   */
   removeNote(username :string, title :string) {
     if (fs.existsSync(`./notes/${username}/${title}`)) {
       console.log('Note removed!');
@@ -76,6 +112,12 @@ export class Notes {
     }
   }
 
+  /**
+   * consolelogColor imprime el text con el color especificado
+   * @param text Texto a imprimir
+   * @param color Color a imprimir
+   * @param inverse Invertir el color al imprimir
+   */
   consolelogColor(text :string, color :string, inverse :boolean = false) {
     switch (color) {
       case 'blue':
@@ -101,6 +143,11 @@ export class Notes {
     }
   }
 
+  /**
+   * checkColor verifica si el color es válido
+   * @param color Color
+   * @returns Devuelve true si es válido
+   */
   checkColor(color :string) {
     const bool = true;
     switch (color) {
